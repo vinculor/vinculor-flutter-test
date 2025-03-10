@@ -1,5 +1,7 @@
 # Vinculor Flutter Test
-This is the Vinculor test for Flutter engineers. Below are two exercises.
+This is the Vinculor test for Flutter engineers.
+## Instructions
+Fork this repository, implement the changes below and create two PRs.
 
 **Exercise 1**
 Implement the three features described below. Each feature should be in a separate commit (ideally in the same order as here). Create a single PR for all three.
