@@ -35,7 +35,7 @@ class _RpcCallerPageState extends State<RpcCallerPage> {
               onPressed: (context) async {
                 await _appController.executeRpcCall();
                 if (context.mounted) {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pop();
                 }
               },
             ),
