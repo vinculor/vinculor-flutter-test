@@ -22,7 +22,10 @@ class AppController {
   final appStateEmitter = Emitter<AppState>(initialValue: AppState.todoEditor);
 
   final todoItemsEmitter = Emitter<List<TodoItem>>(initialValue: [
-    TodoItem(title: 'First item', description: 'This is the first item', isDone: true),
+    TodoItem(
+        title: 'First item',
+        description: 'This is the first item',
+        isDone: true),
     TodoItem(title: 'Second item', description: 'This is the second item'),
     TodoItem(title: 'Third item', description: 'This is the third item'),
   ]);
@@ -34,6 +37,20 @@ class AppController {
   void addTodoItem(TodoItem item) {
     final currentItems = List<TodoItem>.from(todoItemsEmitter.value);
     currentItems.add(item);
+    todoItemsEmitter.value = currentItems;
+  }
+
+  Future<void> toggleTodoItemStatus(TodoItem item, int index) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final currentItems = List<TodoItem>.from(todoItemsEmitter.value);
+    final updatedItem = TodoItem(
+      title: item.title,
+      description: item.description,
+      isDone: !item.isDone,
+    );
+
+    currentItems[index] = updatedItem;
     todoItemsEmitter.value = currentItems;
   }
 
