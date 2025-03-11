@@ -6,6 +6,9 @@ import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/list_section.dart';
 import 'package:test_app_flutter/widget/controller/app_controller.dart';
 import 'package:test_app_flutter/widget/main/app_scaffold.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_action.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_label.dart';
+import 'package:test_app_flutter/widget/todo_editor/add_todo_item_page.dart';
 
 class TodoEditorPage extends StatefulWidget {
   const TodoEditorPage({super.key});
@@ -18,7 +21,22 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
 
   get _appPage => AppPage(
-        scaffold: AppScaffold(titleText: 'TODO Editor'),
+        scaffold: AppScaffold(
+          titleText: 'TODO Editor',
+          floatingAction: AppItemAction<BuildContext>(
+            label: AppLabel(
+              text: 'Add Item',
+              iconData: Icons.add,
+            ),
+            onPressed: (context) async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AddTodoItemPage(),
+                ),
+              );
+            },
+          ),
+        ),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
           CardSection<List<TodoItem>>(

@@ -31,6 +31,12 @@ class AppController {
     appStateEmitter.value = state;
   }
 
+  void addTodoItem(TodoItem item) {
+    final currentItems = List<TodoItem>.from(todoItemsEmitter.value);
+    currentItems.add(item);
+    todoItemsEmitter.value = currentItems;
+  }
+
   Future<void> executeRpcCall() async {
     await Future.delayed(Duration(seconds: 2));
   }
