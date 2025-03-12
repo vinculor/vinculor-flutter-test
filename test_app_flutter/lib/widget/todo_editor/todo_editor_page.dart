@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_action.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_label.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_tile.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/card_section.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/list_section.dart';
 import 'package:test_app_flutter/widget/controller/app_controller.dart';
 import 'package:test_app_flutter/widget/main/app_scaffold.dart';
+import 'package:test_app_flutter/widget/todo_editor/todo_add_page.dart';
 
 class TodoEditorPage extends StatefulWidget {
   const TodoEditorPage({super.key});
@@ -18,7 +21,15 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
 
   get _appPage => AppPage(
-        scaffold: AppScaffold(titleText: 'TODO Editor'),
+        scaffold: AppScaffold(
+            titleText: 'TODO Editor',
+            floatingAction: AppItemAction<BuildContext>(
+                label: AppLabel(iconData: Icons.add, text: 'Add Item'),
+                onPressed: (_) async {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => TodoAddPage()));
+                },
+            isBlocking: false)),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
           CardSection<List<TodoItem>>(
@@ -29,17 +40,15 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
             listEmitter: _appController.todoItemsEmitter,
             itemGroups: [
               ListItemGroup<TodoItem>(
-                titleText: 'In Progress',
-                filter: (item) => !item.isDone,
-                builder: _itemBuilder,
-                showCount: false
-              ),
+                  titleText: 'In Progress',
+                  filter: (item) => !item.isDone,
+                  builder: _itemBuilder,
+                  showCount: false),
               ListItemGroup<TodoItem>(
-                titleText: 'Completed',
-                filter: (item) => item.isDone,
-                builder: _itemBuilder,
-                showCount: true
-              ),
+                  titleText: 'Completed',
+                  filter: (item) => item.isDone,
+                  builder: _itemBuilder,
+                  showCount: true),
             ],
           )
         ],
