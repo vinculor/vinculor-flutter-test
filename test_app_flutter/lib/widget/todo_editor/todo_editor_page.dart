@@ -19,6 +19,7 @@ class TodoEditorPage extends StatefulWidget {
 
 class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
+  final Map<TodoItem, bool> _checkCompletionStates = {};
 
   get _appPage => AppPage(
         scaffold: AppScaffold(
@@ -29,7 +30,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => TodoAddPage()));
                 },
-            isBlocking: false)),
+                isBlocking: false)),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
           CardSection<List<TodoItem>>(
@@ -54,6 +55,33 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
         ],
       );
 
+  void _checkCompletion(TodoItem item) async {
+    setState(() {
+      _checkCompletionStates[item] =
+          true; // set item check completion to disable checkbox
+    });
+
+    await Future.delayed(Duration(seconds: 1)); // delay 1s
+
+    final todoListUpdate =
+        _appController.todoItemsEmitter.value.map((todoItem) {
+      if (todoItem == item) {
+        return TodoItem(
+          title: todoItem.title,
+          description: todoItem.description,
+          isDone: !todoItem.isDone,
+        );
+      }
+      return todoItem;
+    }).toList();
+
+    _appController.todoItemsEmitter.value = todoListUpdate;
+
+    setState(() {
+      _checkCompletionStates[item] = false; // enable checkbox
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _appPage.build();
@@ -72,6 +100,11 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
     return ListTile(
       title: Text(item.title),
       subtitle: Text(item.description ?? ''),
+      leading: Checkbox(
+          value: item.isDone,
+          onChanged: _checkCompletionStates[item] == true
+              ? null
+              : (_) => _checkCompletion(item)),
     );
   }
 }
