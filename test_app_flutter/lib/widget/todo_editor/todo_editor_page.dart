@@ -18,7 +18,9 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
 
   get _appPage => AppPage(
-        scaffold: AppScaffold(titleText: 'TODO Editor'),
+        scaffold: AppScaffold(
+          titleText: 'TODO Editor',
+        ),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
           CardSection<List<TodoItem>>(
@@ -28,12 +30,20 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           ListSection(
             listEmitter: _appController.todoItemsEmitter,
             itemGroups: [
-              ListItemGroup(
-                titleText: 'Items',
+              ListItemGroup<TodoItem>(
+                titleText: 'In Progress',
+                showCount: false,
                 builder: _itemBuilder,
+                filter: (items) => !items.isDone,
+              ),
+              ListItemGroup<TodoItem>(
+                titleText: 'Completed',
+                showCount: true,
+                builder: _itemBuilder,
+                filter: (items) => items.isDone,
               ),
             ],
-          )
+          ),
         ],
       );
 
