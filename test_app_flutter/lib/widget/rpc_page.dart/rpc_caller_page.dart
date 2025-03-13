@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:test_app_flutter/widget/controller/app_controller.dart';
 import 'package:test_app_flutter/widget/main/app_scaffold.dart';
+import 'package:test_app_flutter/widget/rpc_page.dart/rpc_page.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_action.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_button.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_label.dart';
@@ -35,7 +36,7 @@ class _RpcCallerPageState extends State<RpcCallerPage> {
               onPressed: (context) async {
                 await _appController.executeRpcCall();
                 if (context.mounted) {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pop();
                 }
               },
             ),
