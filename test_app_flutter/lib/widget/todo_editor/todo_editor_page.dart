@@ -28,9 +28,17 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
           ListSection(
             listEmitter: _appController.todoItemsEmitter,
             itemGroups: [
-              ListItemGroup(
-                titleText: 'Items',
+              ListItemGroup<TodoItem>(
+                titleText: 'In Progress',
+                filter: (item) => !item.isDone,
                 builder: _itemBuilder,
+                showCount: false,
+              ),
+              ListItemGroup<TodoItem>(
+                titleText: 'Completed',
+                filter: (item) => item.isDone,
+                builder: _itemBuilder,
+                showCount: true,
               ),
             ],
           )
