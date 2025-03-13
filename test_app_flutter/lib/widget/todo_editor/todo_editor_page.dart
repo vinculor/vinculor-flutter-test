@@ -77,10 +77,43 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   }
 
   Widget _itemBuilder(TodoItem item) {
-    return ListTile(
-      title: Text(item.title),
-      subtitle: Text(item.description ?? ''),
+    bool isUpdating = false;
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return ListTile(
+          leading: Checkbox(
+            value: item.isDone,
+            onChanged: isUpdating
+                ? null
+                : (value) async {
+                    setState(() => isUpdating = true);
+                    await _toggleTodoItem(item);
+                    setState(() => isUpdating = false);
+                  },
+          ),
+          title: Text(item.title),
+          subtitle: Text(item.description ?? ''),
+        );
+      },
     );
+  }
+
+  Future<void> _toggleTodoItem(TodoItem item) async {
+    final updatedList = _appController.todoItemsEmitter.value.map((todo) {
+      if (todo == item) {
+        return TodoItem(
+          title: todo.title,
+          description: todo.description,
+          isDone: !todo.isDone, // Switch value
+        );
+      }
+      return todo;
+    }).toList();
+
+    await Future.delayed(Duration(microseconds: 500));
+
+    _appController.todoItemsEmitter.value = updatedList;
   }
 
   void _addNewItem(TodoItem item) {
