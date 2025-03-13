@@ -22,7 +22,10 @@ class AppController {
   final appStateEmitter = Emitter<AppState>(initialValue: AppState.todoEditor);
 
   final todoItemsEmitter = Emitter<List<TodoItem>>(initialValue: [
-    TodoItem(title: 'First item', description: 'This is the first item', isDone: true),
+    TodoItem(
+        title: 'First item',
+        description: 'This is the first item',
+        isDone: true),
     TodoItem(title: 'Second item', description: 'This is the second item'),
     TodoItem(title: 'Third item', description: 'This is the third item'),
   ]);
@@ -33,5 +36,10 @@ class AppController {
 
   Future<void> executeRpcCall() async {
     await Future.delayed(Duration(seconds: 2));
+  }
+
+  void addTodoItem(TodoItem newItem) {
+    final currentItems = todoItemsEmitter.value;
+    todoItemsEmitter.value = [...currentItems, newItem];
   }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_action.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_label.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_tile.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/card_section.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/list_section.dart';
 import 'package:test_app_flutter/widget/controller/app_controller.dart';
 import 'package:test_app_flutter/widget/main/app_scaffold.dart';
+import 'package:test_app_flutter/widget/todo_editor/add_todo_page.dart';
 
 class TodoEditorPage extends StatefulWidget {
   const TodoEditorPage({super.key});
@@ -17,9 +20,29 @@ class TodoEditorPage extends StatefulWidget {
 class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
 
+  void _navigateToAddItem() async {
+    final newItem = await Navigator.push<TodoItem>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddTodoPage()),
+    );
+    if (newItem != null) {
+      _appController.addTodoItem(newItem);
+    }
+  }
+
   get _appPage => AppPage(
         scaffold: AppScaffold(
           titleText: 'TODO Editor',
+          floatingAction: AppItemAction(
+            label: AppLabel(
+              text: 'Add Item',
+              iconData: Icons.add,
+            ),
+            onPressed: (item) async {
+              _navigateToAddItem();
+            },
+            isBlocking: false,
+          ),
         ),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
@@ -64,7 +87,7 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   Widget _itemBuilder(TodoItem item) {
     return ListTile(
       title: Text(item.title),
-      subtitle: Text(item.description ?? ''),
+      subtitle: Text(item.description ?? '-'),
     );
   }
 }
