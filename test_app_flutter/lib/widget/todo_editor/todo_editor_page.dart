@@ -85,9 +85,44 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   }
 
   Widget _itemBuilder(TodoItem item) {
-    return ListTile(
-      title: Text(item.title),
-      subtitle: Text(item.description ?? '-'),
-    );
+    final ValueNotifier<bool> isProcessing = ValueNotifier<bool>(false);
+
+    return ValueListenableBuilder<bool>(
+        valueListenable: isProcessing,
+        builder: (context, processing, _) {
+          return ListTile(
+            leading: Checkbox(
+              value: item.isDone,
+              checkColor: Colors.yellow,
+              onChanged: processing
+                  ? null
+                  : (bool? newValue) async {
+                      isProcessing.value = true;
+
+                      await Future.delayed(const Duration(microseconds: 1000));
+
+                      final oldItems = _appController.todoItemsEmitter.value;
+
+                      final updatedItems = oldItems.map((todoItem) {
+                        if (todoItem.title == item.title &&
+                            todoItem.description == item.description) {
+                          return TodoItem(
+                            title: todoItem.title,
+                            description: todoItem.description,
+                            isDone: newValue ?? false,
+                          );
+                        }
+                        return todoItem;
+                      }).toList();
+
+                      _appController.todoItemsEmitter.value = updatedItems;
+
+                      isProcessing.value = false;
+                    },
+            ),
+            title: Text(item.title),
+            subtitle: Text(item.description ?? ''),
+          );
+        });
   }
 }
