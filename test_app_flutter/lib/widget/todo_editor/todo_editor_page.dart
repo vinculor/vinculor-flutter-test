@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_action.dart';
+import 'package:test_app_flutter/widget/shared_library/app_components/app_label.dart';
 import 'package:test_app_flutter/widget/shared_library/app_components/app_tile.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/card_section.dart';
 import 'package:test_app_flutter/widget/shared_library/app_page/app_page_section/list_section.dart';
 import 'package:test_app_flutter/widget/controller/app_controller.dart';
 import 'package:test_app_flutter/widget/main/app_scaffold.dart';
+import 'package:test_app_flutter/widget/todo_editor/add_todo_editor_page.dart';
 
 class TodoEditorPage extends StatefulWidget {
   const TodoEditorPage({super.key});
@@ -18,7 +21,21 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
   late final _appController = GetIt.instance<AppController>();
 
   get _appPage => AppPage(
-        scaffold: AppScaffold(titleText: 'TODO Editor'),
+        scaffold: AppScaffold(
+          titleText: 'TODO Editor',
+          floatingAction: AppItemAction(
+            label: AppLabel(text: 'Add Item'),
+            onPressed: (_) async {
+              final newItem = await Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => AddTodoItemPage()));
+
+              if (newItem != null) {
+                _addNewItem(newItem);
+              }
+            },
+            isBlocking: false,
+          ),
+        ),
         loadingEmitter: _appController.todoItemsEmitter,
         sections: [
           CardSection<List<TodoItem>>(
@@ -64,5 +81,10 @@ class _TodoEditorPageState extends State<TodoEditorPage> {
       title: Text(item.title),
       subtitle: Text(item.description ?? ''),
     );
+  }
+
+  void _addNewItem(TodoItem item) {
+    final updatedList = [..._appController.todoItemsEmitter.value, item];
+    _appController.todoItemsEmitter.value = updatedList;
   }
 }
